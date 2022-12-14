@@ -137,7 +137,22 @@ model Product {
 }
 
 // MEMBER 
-model MemberAddress {
+model MemberShippingAddress {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  address         String
+  apartment       String?
+  city            String
+  stateOrProvince String
+  zip             String
+  country         String
+
+  member Member[]
+}
+
+model MemberBillingAddress {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -189,8 +204,11 @@ model Member {
   lastName  String?
   // mayfield
 
-  address   MemberAddress? @relation(fields: [addressId], references: [id])
-  addressId Int?
+  shippingAddress   MemberShippingAddress? @relation(fields: [shippingAddressId], references: [id])
+  shippingAddressId Int?
+
+  billingAddress    MemberBillingAddress?  @relation(fields: [billingAddressId], references: [id])
+  billingAddressId  Int?
 
   payment   MemberPayment? @relation(fields: [paymentId], references: [id])
   paymentId Int?
@@ -199,7 +217,6 @@ model Member {
 }
 
 // CART
-
 model CartItem {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -225,3 +242,4 @@ model Cart {
   products CartItem[]
 }
 
+// ORDER
