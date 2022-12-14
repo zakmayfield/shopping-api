@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Store {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String @unique
+
+  // why is this here? commenting out but if somehting is broken when migrating then i might want to check this out
+  // memberId Int?
+
+  inventory Product[]
+  employees Employee[]
+}
+
+model Product {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  store Store? @relation(fields: [storeId], references: [id])
+  storeId Int?
+}
+
+model Employee {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  store Store? @relation(fields: [storeId], references: [id])
+  storeId Int?
+}
+
+
+
+
+
+// default to this if i mess something up
+
+// model Discount {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   name        String?
+//   description String?
+//   percent     Int?    @default(0)
+//   expiresIn   String? // 2d 3w 4m 1y {number}{d / w / m / y}
+
+//   products Product[]
+// }
+
+// model Member {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   username String  @unique
+//   email    String  @unique
+//   password String
+//   points   Int?
+//   token    String?
+
+//   cart         Cart[]
+//   orderDetails OrderDetails[]
+// }
+
+// model Employee {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   name  String
+//   email String
+//   title String?
+//   pay   Int?    @default(0)
+
+//   store   Store @relation(fields: [storeId], references: [id])
+//   storeId Int
+// }
+
+// model Product {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   name             String
+//   description      String
+//   price            Int?
+//   isDiscountActive Boolean @default(false)
+
+//   store      Store     @relation(fields: [storeId], references: [id])
+//   storeId    Int
+//   discount   Discount? @relation(fields: [discountId], references: [id])
+//   discountId Int?
+
+//   cartItem   CartItem[]
+//   orderItems OrderItems[]
+// }
+
+// model Cart {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   total Int? @default(0)
+
+//   member   Member? @relation(fields: [memberId], references: [id])
+//   memberId Int?
+
+//   products CartItem[]
+// }
+
+// model CartItem {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   quantity Int
+
+//   cart   Cart? @relation(fields: [cartId], references: [id])
+//   cartId Int?
+
+//   product   Product? @relation(fields: [productId], references: [id])
+//   productId Int?
+// }
+
+// model MemberPayment {
+//   id Int @id @default(autoincrement())
+// }
+
+// model PaymentDetails {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   amount   Int
+//   provider String
+//   status   String
+
+//   orderDetails OrderDetails[]
+// }
+
+// model OrderDetails {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   total Int
+
+//   member   Member? @relation(fields: [memberId], references: [id])
+//   memberId Int?
+
+//   paymentDetails   PaymentDetails? @relation(fields: [paymentDetailsId], references: [id])
+//   paymentDetailsId Int?
+
+//   orderItems OrderItems[]
+// }
+
+// model OrderItems {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   orderDetails   OrderDetails? @relation(fields: [orderDetailsId], references: [id])
+//   orderDetailsId Int?
+
+//   product   Product? @relation(fields: [productId], references: [id])
+//   productId Int?
+// }
