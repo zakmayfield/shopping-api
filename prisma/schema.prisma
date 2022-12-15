@@ -8,7 +8,7 @@ datasource db {
 }
 
 // ::: HQ ::: 
-model HQ {
+model HQ { // 1 hq can have 1 address, many stores
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -36,8 +36,8 @@ model HQAddress {
   hqId Int @unique
 }
 
-// ::: STORE :::
-model Store {
+// ::: STORE ::: 
+model Store { // 1 store can have 1 address, 1 hq, many products
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -69,7 +69,7 @@ model StoreAddress {
 }
 
 // ::: PRODUCT :::
-model ProductDiscount {
+model Discount { // 1 discount can have many products
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -86,11 +86,12 @@ model ProductDiscount {
   // this discount needs to be active in order for members to use
 
   discountedProducts Product[]
+  discountedCategories ProductCategory[]
   // this will spit out an array of products using this specific discount
 }
 
-// think about applying category discounts
 model ProductCategory {
+  // Consider applying category discounts. 1 discount can have many categories {{ categories ProductCategories[] }}
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -98,10 +99,13 @@ model ProductCategory {
   name String  @unique
   code String?
 
+  discount Discount? @relation(fields: [discountId], references: [id])
+  discountId Int?
+
   products CategoriesOnProducts[]
 }
 
-model Product {
+model Product { // 1 product can have 1 discount, many categories, many stores
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -111,15 +115,14 @@ model Product {
   price            Int?
   isDiscountActive Boolean @default(false)
 
-  discount   ProductDiscount? @relation(fields: [discountId], references: [id])
+  discount   Discount? @relation(fields: [discountId], references: [id])
   discountId Int?
 
   categorys CategoriesOnProducts[]
   stores ProductsOnStores[]
 }
 
-// JOIN tables
-model CategoriesOnProducts {
+model CategoriesOnProducts { // JOIN categories & products
   product Product @relation(fields: [productId], references: [id])
   productId Int
 
@@ -129,7 +132,7 @@ model CategoriesOnProducts {
   @@id([productId, categoryId])
 }
 
-model ProductsOnStores {
+model ProductsOnStores { // JOIN products & stores with shared quantity property
   product Product @relation(fields: [productId], references: [id])
   productId Int
 
