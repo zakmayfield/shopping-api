@@ -101,7 +101,6 @@ model ProductCategory {
   products CategoriesOnProducts[]
 }
 
-// product will need to be associated with a store as well, m-n most likely store has many products and product as many stores
 model Product {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
