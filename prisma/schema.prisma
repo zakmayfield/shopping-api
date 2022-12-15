@@ -7,7 +7,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// HQ
+// ::: HQ ::: 
+model HQ {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String
+
+  address   HQAddress?
+
+  stores Store[]
+}
+
 model HQAddress {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -20,25 +32,27 @@ model HQAddress {
   zip             String
   country         String
 
-  hqs HQ[]
+  hq HQ @relation(fields: [hqId], references: [id])
+  hqId Int @unique
 }
 
-model HQ {
+// ::: STORE :::
+model Store {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name String
+  name String @unique
 
-  address   HQAddress? @relation(fields: [addressId], references: [id])
-  addressId Int?
-  // each HQ has an address, which is stored in its own table HQAddress
-  // this means an HQ can be created without setting an address initially (flexible)
+  address   StoreAddress?
 
-  stores Store[]
+  hq   HQ?  @relation(fields: [hqId], references: [id])
+  hqId Int?
+
+  // inventory Product[]
+  // array containing all products associated to this store
 }
 
-// STORE
 model StoreAddress {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -51,31 +65,11 @@ model StoreAddress {
   zip             String
   country         String
 
-  stores Store[]
-  // array with store associated to this id ( i believe )
+  store Store @relation(fields: [storeId], references: [id])
+  storeId Int @unique
 }
 
-model Store {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  name String @unique
-  // name of store / shop / branch
-
-  address   StoreAddress? @relation(fields: [addressId], references: [id])
-  addressId Int?
-  // same deal with HQ having an address
-
-  hq   HQ?  @relation(fields: [hqId], references: [id])
-  hqId Int?
-  // each store will be run by a HQ
-
-  inventory Product[]
-  // array containing all products associated to this store
-}
-
-// PRODUCT
+// ::: PRODUCT :::
 model ProductDiscount {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -96,150 +90,283 @@ model ProductDiscount {
   // this will spit out an array of products using this specific discount
 }
 
+// think about applying category discounts
 model ProductCategory {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   name String  @unique
-  // independent artists
   code String?
-  // ia
 
-  products Product[]
-  // array of products in this category
+  products CategoriesOnProducts[]
 }
 
+// product will need to be associated with a store as well, m-n most likely store has many products and product as many stores
 model Product {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   name             String
-  // custom engraved coaster
   description      String?
-  // a hand carved coaster
   price            Int?
-  // 12
   isDiscountActive Boolean @default(false)
-  // false | true
-
-  store   Store? @relation(fields: [storeId], references: [id])
-  storeId Int?
 
   discount   ProductDiscount? @relation(fields: [discountId], references: [id])
   discountId Int?
 
-  category   ProductCategory? @relation(fields: [categoryId], references: [id])
-  categoryId Int?
-
-  cartItem CartItem[]
+  category CategoriesOnProducts[]
 }
 
-// MEMBER 
-model MemberShippingAddress {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// with the addition of this join table products can now have multiple categories and vice versa
+model CategoriesOnProducts {
+  product Product @relation(fields: [productId], references: [id])
+  productId Int
 
-  address         String
-  apartment       String?
-  city            String
-  stateOrProvince String
-  zip             String
-  country         String
+  category ProductCategory @relation(fields: [categoryId], references: [id])
+  categoryId Int
 
-  member Member[]
+  @@id([productId, categoryId])
 }
 
-model MemberBillingAddress {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
-  address         String
-  apartment       String?
-  city            String
-  stateOrProvince String
-  zip             String
-  country         String
 
-  member Member[]
-}
 
-model MemberPayment {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
-  provider       String
-  // mastercard || visa
-  nameOnCard     String
-  // geralt of rivia
-  cardNumber     Int
-  // 1234 1234 1234 1234
-  expirationDate DateTime
-  // date time can format on frontend
-  cvv            Int
-  // 722
+// // HQ
+// model HQAddress {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-  member Member[]
-}
+//   address         String
+//   apartment       String?
+//   city            String
+//   stateOrProvince String
+//   zip             String
+//   country         String
 
-model Member {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+//   hqs HQ[]
+// }
 
-  email     String  @unique
-  // zaarmad@email.com
-  password  String
-  // abc123
-  token     String?
-  // jwt
-  points    Int?
-  // 112
-  firstName String?
-  // zak
-  lastName  String?
-  // mayfield
+// model HQ {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-  shippingAddress   MemberShippingAddress? @relation(fields: [shippingAddressId], references: [id])
-  shippingAddressId Int?
+//   name String
 
-  billingAddress    MemberBillingAddress?  @relation(fields: [billingAddressId], references: [id])
-  billingAddressId  Int?
+//   address   HQAddress? @relation(fields: [addressId], references: [id])
+//   addressId Int?
+//   // each HQ has an address, which is stored in its own table HQAddress
+//   // this means an HQ can be created without setting an address initially (flexible)
 
-  payment   MemberPayment? @relation(fields: [paymentId], references: [id])
-  paymentId Int?
+//   stores Store[]
+// }
 
-  cart Cart[]
-}
+// // STORE
+// model StoreAddress {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-// CART
-model CartItem {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+//   address         String
+//   apartment       String?
+//   city            String
+//   stateOrProvince String
+//   zip             String
+//   country         String
 
-  product   Product? @relation(fields: [productId], references: [id])
-  productId Int?
+//   stores Store[]
+//   // array with store associated to this id ( i believe )
+// }
 
-  cart   Cart? @relation(fields: [cartId], references: [id])
-  cartId Int?
-}
+// model Store {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-model Cart {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+//   name String @unique
+//   // name of store / shop / branch
 
-  total Int?
+//   address   StoreAddress? @relation(fields: [addressId], references: [id])
+//   addressId Int?
+//   // same deal with HQ having an address
 
-  member   Member? @relation(fields: [memberId], references: [id])
-  memberId Int?
+//   hq   HQ?  @relation(fields: [hqId], references: [id])
+//   hqId Int?
+//   // each store will be run by a HQ
 
-  products CartItem[]
-}
+//   inventory Product[]
+//   // array containing all products associated to this store
+// }
 
-// ORDER
+// // PRODUCT
+// model ProductDiscount {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   name        String
+//   // '10% off order'
+//   description String?
+//   // activating this discount will grant you 10% off of your first order
+//   expiresIn   String? // 2d, 3w, 4m, 1y // {number}{string: d | w | m | y}
+//   // once activated this discount will be active for a set time
+//   percent     Int?
+//   // percentage off i.e {10}
+//   isActive    Boolean @default(false)
+//   // this discount needs to be active in order for members to use
+
+//   discountedProducts Product[]
+//   // this will spit out an array of products using this specific discount
+// }
+
+// model ProductCategory {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   name String  @unique
+//   // independent artists
+//   code String?
+//   // ia
+
+//   products Product[]
+//   // array of products in this category
+// }
+
+// model Product {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   name             String
+//   // custom engraved coaster
+//   description      String?
+//   // a hand carved coaster
+//   price            Int?
+//   // 12
+//   isDiscountActive Boolean @default(false)
+//   // false | true
+
+//   store   Store? @relation(fields: [storeId], references: [id])
+//   storeId Int?
+
+//   discount   ProductDiscount? @relation(fields: [discountId], references: [id])
+//   discountId Int?
+
+//   category   ProductCategory? @relation(fields: [categoryId], references: [id])
+//   categoryId Int?
+
+//   cartItem CartItem[]
+// }
+
+// // MEMBER 
+// model MemberShippingAddress {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   address         String
+//   apartment       String?
+//   city            String
+//   stateOrProvince String
+//   zip             String
+//   country         String
+
+//   member Member[]
+// }
+
+// model MemberBillingAddress {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   address         String
+//   apartment       String?
+//   city            String
+//   stateOrProvince String
+//   zip             String
+//   country         String
+
+//   member Member[]
+// }
+
+// model MemberPayment {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   provider       String
+//   // mastercard || visa
+//   nameOnCard     String
+//   // geralt of rivia
+//   cardNumber     Int
+//   // 1234 1234 1234 1234
+//   expirationDate DateTime
+//   // date time can format on frontend
+//   cvv            Int
+//   // 722
+
+//   member Member[]
+// }
+
+// model Member {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   email     String  @unique
+//   // zaarmad@email.com
+//   password  String
+//   // abc123
+//   token     String?
+//   // jwt
+//   points    Int?
+//   // 112
+//   firstName String?
+//   // zak
+//   lastName  String?
+//   // mayfield
+
+//   shippingAddress   MemberShippingAddress? @relation(fields: [shippingAddressId], references: [id])
+//   shippingAddressId Int?
+
+//   billingAddress    MemberBillingAddress?  @relation(fields: [billingAddressId], references: [id])
+//   billingAddressId  Int?
+
+//   payment   MemberPayment? @relation(fields: [paymentId], references: [id])
+//   paymentId Int?
+
+//   cart Cart[]
+// }
+
+// // CART
+// model CartItem {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   product   Product? @relation(fields: [productId], references: [id])
+//   productId Int?
+
+//   cart   Cart? @relation(fields: [cartId], references: [id])
+//   cartId Int?
+// }
+
+// model Cart {
+//   id        Int      @id @default(autoincrement())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   total Int?
+
+//   member   Member? @relation(fields: [memberId], references: [id])
+//   memberId Int?
+
+//   products CartItem[]
+// }
+
+// // ORDER
