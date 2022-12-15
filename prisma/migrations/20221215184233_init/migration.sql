@@ -98,6 +98,14 @@ CREATE TABLE "CategoriesOnProducts" (
     CONSTRAINT "CategoriesOnProducts_pkey" PRIMARY KEY ("productId","categoryId")
 );
 
+-- CreateTable
+CREATE TABLE "ProductsOnStores" (
+    "productId" INTEGER NOT NULL,
+    "storeId" INTEGER NOT NULL,
+
+    CONSTRAINT "ProductsOnStores_pkey" PRIMARY KEY ("productId","storeId")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "HQAddress_hqId_key" ON "HQAddress"("hqId");
 
@@ -127,3 +135,9 @@ ALTER TABLE "CategoriesOnProducts" ADD CONSTRAINT "CategoriesOnProducts_productI
 
 -- AddForeignKey
 ALTER TABLE "CategoriesOnProducts" ADD CONSTRAINT "CategoriesOnProducts_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "ProductCategory"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ProductsOnStores" ADD CONSTRAINT "ProductsOnStores_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ProductsOnStores" ADD CONSTRAINT "ProductsOnStores_storeId_fkey" FOREIGN KEY ("storeId") REFERENCES "Store"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
