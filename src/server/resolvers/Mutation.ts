@@ -1,22 +1,22 @@
-import prisma from '../../prisma/client'
+import prisma from '../../prisma/client';
 
 export const Mutation = {
-    toggleProductDiscount: async (_parent, args) => {
-        const {input} = args
-        const id = input.productId
-        const product = await prisma.product.findUnique({where: { id }})
+  toggleActiveDiscount: async (_parent, args) => {
+    const { input } = args;
+    const id = input.discountId;
+    const discount = await prisma.discount.findUnique({ where: { id } });
 
-        if (!product) {
-            throw new Error(`No product to update`)
-        }
+    if (!discount) {
+      throw new Error(`Cannot locate discount`);
+    }
 
-        const updatedProduct = await prisma.product.update({
-            where: { id },
-            data: {
-                isDiscountActive: !product.isDiscountActive
-            }
-        })
+    const updatedDiscount = await prisma.discount.update({
+      where: { id },
+      data: {
+        isActive: !discount.isActive,
+      },
+    });
 
-        return updatedProduct
-    },
+    return updatedDiscount;
+  },
 };

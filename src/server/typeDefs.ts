@@ -5,7 +5,7 @@ const typeDefs = `#graphql
     }
 
     type Mutation {
-        toggleProductDiscount(input: ProductDiscountToggle): Product
+        toggleActiveDiscount(input: DiscountToggle): Discount
     }
     
     type Product {
@@ -46,12 +46,12 @@ const typeDefs = `#graphql
         description: String
     }
 
-    input ProductDiscountToggle {
+    input ProductById {
         productId: Int!
     }
 
-    input ProductById {
-        productId: Int!
+    input DiscountToggle {
+        discountId: Int!
     }
 `;
 

@@ -113,7 +113,7 @@ model Product {
   name             String
   description      String?
   price            Int?
-  // REMOVE THIS PROPERTY // RELY ON JOINED DISCOUNT TABLE TO ACCESS ACTIVE PROP
+  // REMOVE THIS PROPERTY // RELY ON JOINED DISCOUNT TABLE TO ACCESS ACTIVE PROP // discount prop will be null if no discount is applied
   isDiscountActive Boolean @default(false)
 
   discount   Discount? @relation(fields: [discountId], references: [id])
