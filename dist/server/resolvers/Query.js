@@ -16,4 +16,18 @@ exports.Query = {
         }
         return products;
     },
+    getProductWithDiscountById: async (_parent, args) => {
+        const { input } = args;
+        const product = await client_1.default.product.findUnique({
+            where: { id: input.productId },
+            include: {
+                discount: true,
+                categorys: true,
+            },
+        });
+        if (!product) {
+            throw new Error(`Cannot find product`);
+        }
+        return product;
+    },
 };

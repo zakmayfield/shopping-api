@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const typeDefs = `#graphql
     type Query {
         getAllProducts: [Product!]!
+        getProductWithDiscountById(input: ProductById!): ProductWithDiscount!
     }
 
     type Mutation {
@@ -19,6 +20,28 @@ const typeDefs = `#graphql
         isDiscountActive: Boolean!
     }
 
+    type ProductWithDiscount {
+        id: ID!
+        createdAt: String
+        updatedAt: String
+        name: String!
+        description: String
+        price: String
+        isDiscountActive: Boolean!
+        discount: Discount
+    }
+
+    type Discount {
+        id: ID!
+        createdAt: String
+        updatedAt: String
+        name: String!
+        description: String
+        expiresIn: String
+        percent: Int
+        isActive: Boolean
+    }
+
     input ProductInput {
         name: String!
         price: String
@@ -26,6 +49,10 @@ const typeDefs = `#graphql
     }
 
     input ProductDiscountToggle {
+        productId: Int!
+    }
+
+    input ProductById {
         productId: Int!
     }
 `;
