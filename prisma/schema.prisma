@@ -8,14 +8,14 @@ datasource db {
 }
 
 // ::: HQ ::: 
-model HQ { // 1 hq can have 1 address, many stores
+model HQ {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   name String
 
-  address   HQAddress?
+  address HQAddress?
 
   stores Store[]
 }
@@ -32,19 +32,19 @@ model HQAddress {
   zip             String
   country         String
 
-  hq HQ @relation(fields: [hqId], references: [id])
+  hq   HQ  @relation(fields: [hqId], references: [id])
   hqId Int @unique
 }
 
 // ::: STORE ::: 
-model Store { // 1 store can have 1 address, 1 hq, many products
+model Store {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   name String @unique
 
-  address   StoreAddress?
+  address StoreAddress?
 
   hq   HQ?  @relation(fields: [hqId], references: [id])
   hqId Int?
@@ -64,12 +64,12 @@ model StoreAddress {
   zip             String
   country         String
 
-  store Store @relation(fields: [storeId], references: [id])
-  storeId Int @unique
+  store   Store @relation(fields: [storeId], references: [id])
+  storeId Int   @unique
 }
 
 // ::: PRODUCT :::
-model Discount { // 1 discount can have many products
+model Discount {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -85,7 +85,7 @@ model Discount { // 1 discount can have many products
   isActive    Boolean @default(false)
   // this discount needs to be active in order for members to use
 
-  discountedProducts Product[]
+  discountedProducts   Product[]
   discountedCategories ProductCategory[]
   // this will spit out an array of products using this specific discount
 }
@@ -99,13 +99,13 @@ model ProductCategory {
   name String  @unique
   code String?
 
-  discount Discount? @relation(fields: [discountId], references: [id])
+  discount   Discount? @relation(fields: [discountId], references: [id])
   discountId Int?
 
   products CategoriesOnProducts[]
 }
 
-model Product { // 1 product can have 1 discount, many categories, many stores
+model Product {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -119,24 +119,25 @@ model Product { // 1 product can have 1 discount, many categories, many stores
   discountId Int?
 
   categorys CategoriesOnProducts[]
-  stores ProductsOnStores[]
+  stores    ProductsOnStores[]
+  CartItem  CartItem?
 }
 
-model CategoriesOnProducts { // JOIN categories & products
-  product Product @relation(fields: [productId], references: [id])
+model CategoriesOnProducts {
+  product   Product @relation(fields: [productId], references: [id])
   productId Int
 
-  category ProductCategory @relation(fields: [categoryId], references: [id])
+  category   ProductCategory @relation(fields: [categoryId], references: [id])
   categoryId Int
 
   @@id([productId, categoryId])
 }
 
-model ProductsOnStores { // JOIN products & stores with shared quantity property
-  product Product @relation(fields: [productId], references: [id])
+model ProductsOnStores {
+  product   Product @relation(fields: [productId], references: [id])
   productId Int
 
-  store Store @relation(fields: [storeId], references: [id])
+  store   Store @relation(fields: [storeId], references: [id])
   storeId Int
 
   quantity Int?
@@ -157,7 +158,7 @@ model MemberShippingAddress {
   zip             String
   country         String
 
-  member Member @relation(fields: [memberId], references: [id])
+  member   Member @relation(fields: [memberId], references: [id])
   memberId Int
 }
 
@@ -173,7 +174,7 @@ model MemberBillingAddress {
   zip             String
   country         String
 
-  member Member @relation(fields: [memberId], references: [id])
+  member   Member @relation(fields: [memberId], references: [id])
   memberId Int
 }
 
@@ -193,9 +194,36 @@ model MemberPayment {
   cvv            Int
   // 722
 
-  member Member @relation(fields: [memberId], references: [id])
+  member   Member @relation(fields: [memberId], references: [id])
   memberId Int
 }
+
+// ::: CART :::
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quantity Int
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int     @unique
+  cart   Cart @relation(fields: [cartId], references: [id])
+  cartId Int  @unique
+}
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items CartItem[]
+
+  memberProfile   MemberProfile @relation(fields: [memberProfileId], references: [id])
+  memberProfileId Int           @unique
+}
+
+// ::: END CART :::
 
 model MemberProfile {
   id        Int      @id @default(autoincrement())
@@ -203,35 +231,33 @@ model MemberProfile {
   updatedAt DateTime @updatedAt
 
   firstName String?
-  lastName String?
-  username String?
-  points Int? @default(0)
+  lastName  String?
+  username  String?
+  points    Int?    @default(0)
 
-  member Member @relation(fields: [memberId], references: [id])
-  memberId Int @unique
+  cart Cart?
+
+  member   Member @relation(fields: [memberId], references: [id])
+  memberId Int    @unique
 }
 
-model Member { // 1 member can have 1 payment, 1 billing address, 1 shipping address, 
+model Member {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email     String  @unique
+  email    String  @unique
   // zaarmad@email.com
-  password  String
+  password String
   // abc123
-  token     String?
+  token    String?
   // jwt
 
-  profile MemberProfile?
-  payments MemberPayment[]
-  billingAddresses MemberBillingAddress[]
+  profile           MemberProfile?
+  payments          MemberPayment[]
+  billingAddresses  MemberBillingAddress[]
   shippingAddresses MemberShippingAddress[]
 }
-
-
-
-
 
 // // HQ
 // model HQAddress {
