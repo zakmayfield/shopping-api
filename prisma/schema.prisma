@@ -144,6 +144,91 @@ model ProductsOnStores { // JOIN products & stores with shared quantity property
   @@id([productId, storeId])
 }
 
+// ::: MEMBER :::
+model MemberShippingAddress {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  address         String
+  apartment       String?
+  city            String
+  stateOrProvince String
+  zip             String
+  country         String
+
+  member Member @relation(fields: [memberId], references: [id])
+  memberId Int
+}
+
+model MemberBillingAddress {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  address         String
+  apartment       String?
+  city            String
+  stateOrProvince String
+  zip             String
+  country         String
+
+  member Member @relation(fields: [memberId], references: [id])
+  memberId Int
+}
+
+model MemberPayment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  provider       String
+  // mastercard || visa
+  nameOnCard     String
+  // geralt of rivia
+  cardNumber     Int
+  // 1234 1234 1234 1234
+  expirationDate DateTime
+  // date time can format on frontend
+  cvv            Int
+  // 722
+
+  member Member @relation(fields: [memberId], references: [id])
+  memberId Int
+}
+
+model MemberProfile {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  firstName String?
+  lastName String?
+  username String?
+  points Int? @default(0)
+
+  member Member @relation(fields: [memberId], references: [id])
+  memberId Int @unique
+}
+
+model Member { // 1 member can have 1 payment, 1 billing address, 1 shipping address, 
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email     String  @unique
+  // zaarmad@email.com
+  password  String
+  // abc123
+  token     String?
+  // jwt
+
+  profile MemberProfile?
+  payments MemberPayment[]
+  billingAddresses MemberBillingAddress[]
+  shippingAddresses MemberShippingAddress[]
+}
+
 
 
 

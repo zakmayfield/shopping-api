@@ -20,7 +20,9 @@ const server = new ApolloServer({
 const startServer = async () => {
   await startStandaloneServer(server, {
     listen: { port: 4000 },
-    context: async ({ req, res }) => {
+    context: async ({ req }: { req: any }): Promise<{ req: any; }> => {
+      req.user = {}
+
       return {
         req
       };
