@@ -1,6 +1,5 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import prisma from '../prisma/client';
 import {Query} from './resolvers/Query'
 import {Mutation} from './resolvers/Mutation'
 import typeDefs from './typeDefs';
