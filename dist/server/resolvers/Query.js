@@ -30,4 +30,35 @@ exports.Query = {
         }
         return product;
     },
+    //HQs
+    getAllHQs: async (_parent, arg) => {
+        const HQs = await client_1.default.hQ.findMany({
+            include: {
+                address: true,
+                stores: true
+            }
+        });
+        if (!HQs) {
+            throw new Error(`🚫 No HQs Found`);
+        }
+        return HQs;
+    },
+    //Stores
+    getAllStores: async (_parent, args) => {
+        const stores = await client_1.default.store.findMany({
+            include: {
+                address: true,
+                hq: true,
+                products: {
+                    include: {
+                        product: true
+                    }
+                }
+            }
+        });
+        if (!stores) {
+            throw new Error(`🚫 No stores found`);
+        }
+        return stores;
+    }
 };

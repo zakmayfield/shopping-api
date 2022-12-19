@@ -1,32 +1,84 @@
 const typeDefs = `#graphql
     type Query {
         getAllProducts: [Product!]!
-        getProductWithDiscountById(input: ProductById!): ProductWithDiscount!
+        getProductWithDiscountById(input: ProductById!): Product!
+
+        # HQ queries
+        getAllHQs: [HQ!]!
+
+        # Store query
+        getAllStores: [Store!]!
     }
 
     type Mutation {
         toggleActiveDiscount(input: DiscountToggle): Discount
     }
-    
+
+    type HQ {
+        id: ID!
+        createdAt: String
+        updatedAt: String
+        name: String!
+        address: HQAddress!
+        stores: [Store]
+    }
+
+    type HQAddress {
+        id: ID!
+        createdAt: String
+        updatedAt: String
+        address: String!
+        apartment: String
+        city: String!
+        stateOrProvince: String!
+        zip: Int!
+        country: String!
+        hq: HQ
+        hqId: Int
+    }
+
+    type Store {
+        id: ID!
+        createdAt: String
+        updatedAt: String
+        name: String!
+        address: StoreAddress
+        hq: HQ
+        hqId: Int
+        products: [ProductsOnStores]!
+    }
+
+    type StoreAddress {
+        id: ID!
+        createdAt: String
+        updatedAt: String
+        address: String!
+        apartment: String
+        city: String!
+        stateOrProvince: String!
+        zip: Int!
+        country: String!
+        store: Store
+        storeId: Int
+    }
+
     type Product {
         id: ID!
         createdAt: String
         updatedAt: String
         name: String!
         description: String
-        price: String
-        isDiscountActive: Boolean!
-    }
-
-    type ProductWithDiscount {
-        id: ID!
-        createdAt: String
-        updatedAt: String
-        name: String!
-        description: String
-        price: String
+        price: Int
         isDiscountActive: Boolean!
         discount: Discount
+    }
+
+    type ProductsOnStores {
+        product: Product
+        productId: Int
+        store: Store
+        storeId: Int
+        quantity: Int
     }
 
     type Discount {

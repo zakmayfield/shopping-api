@@ -29,4 +29,42 @@ export const Query = {
     }
     return product;
   },
+
+  //HQs
+  getAllHQs: async (_parent, arg) => {
+    const HQs = await prisma.hQ.findMany({
+      include: {
+        address: true,
+        stores: true
+      }
+    })
+
+    if (!HQs) {
+      throw new Error(`🚫 No HQs Found`)
+    }
+
+    return HQs
+  },
+
+  //Stores
+  getAllStores: async (_parent, args) => {
+    const stores = await prisma.store.findMany({
+      include: {
+        address: true,
+        hq: true,
+        // products is array so i think we need to use include here to grab the Object Type
+        products: {
+          include: {
+            product: true
+          }
+        }
+      }
+    })
+
+    if (!stores) {
+      throw new Error(`🚫 No stores found`)
+    }
+
+    return stores
+  }
 };
