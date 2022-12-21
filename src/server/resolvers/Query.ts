@@ -1,7 +1,6 @@
 export const Query = {
-  // ::: MEMBER ::: 
+  // ::: MEMBER ::: +
   getMemberById: async (_parent, { id }, context) => {    
-    console.log('hitting')
     const member = await context.db.member.findUnique({ 
       where: { id: Number(id)},
       include: {
