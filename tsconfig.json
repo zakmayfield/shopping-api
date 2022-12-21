@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "rootDirs": ["src"],
-    "outDir": "dist",
-    "lib": ["es2020"],
-    "target": "esnext",
+    "lib": ["es2021"],
     "module": "commonjs",
-    "moduleResolution": "node",
+    "target": "es2021",
+
     "esModuleInterop": true,
-    "types": ["node"]
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"]
 }
