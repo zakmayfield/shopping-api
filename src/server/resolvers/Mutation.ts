@@ -64,16 +64,6 @@ export const Mutation = {
       token: generateToken(member.id)
     }
 
-    // @context-debugging
-    // my theory here is that i can set context.member to be equal to an object upon login
-    // then any hits to context thereafter will produce 
-    // context.member = {
-    //   id: validMember.id,
-    //   token: validMember.token
-    // };
-
-    console.log('context', context)
-
     return validMember
   },
 

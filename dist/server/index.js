@@ -41,27 +41,12 @@ const server = new server_1.ApolloServer({
     typeDefs: typeDefs_1.default,
     resolvers,
 });
-const startServer = async () => {
-    await (0, standalone_1.startStandaloneServer)(server, {
-        context: async ({ req }) => {
-            const member = {};
-            return {
-                member
-            };
-        },
-    });
-    console.log(`Server running ::: localhost:4000 :::`);
-};
-// const startServer = async () => {
-//   await startStandaloneServer(server, {
-//     listen: { port: 4000 },
-//     context: async ({ req }: { req: any }): Promise<{ member: any; }> => {
-//       const member = {}
-//       return {
-//         member
-//       };
-//     },
-//   });
-//   console.log(`Server running ::: localhost:4000 :::`);
-// };
-startServer();
+(0, standalone_1.startStandaloneServer)(server, {
+    listen: { port: 4000 },
+    context: async ({ req }) => {
+        const member = {};
+        return {
+            member
+        };
+    },
+}).then(({ url }) => console.log(`🚀 Server running at ${url}`));
