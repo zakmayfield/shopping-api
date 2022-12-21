@@ -15,13 +15,16 @@ export const Query = {
 
     return products;
   },
-  getProductWithDiscountById: async (_parent, args) => {
-    const { input } = args;
+  getProductById: async (_parent, { id }) => {
     const product = await prisma.product.findUnique({
-      where: { id: input.productId },
+      where: { id: Number(id) },
       include: {
         discount: true,
-        categorys: true,
+        categories: {
+          include: {
+            category: true,
+          },
+        },
       },
     });
     if (!product) {
@@ -31,19 +34,19 @@ export const Query = {
   },
 
   //HQs
-  getAllHQs: async (_parent, arg) => {
+  getAllHQs: async (_parent, args) => {
     const HQs = await prisma.hQ.findMany({
       include: {
         address: true,
-        stores: true
-      }
-    })
+        stores: true,
+      },
+    });
 
     if (!HQs) {
-      throw new Error(`🚫 No HQs Found`)
+      throw new Error(`🚫 No HQs Found`);
     }
 
-    return HQs
+    return HQs;
   },
 
   //Stores
@@ -55,16 +58,36 @@ export const Query = {
         // products is array so i think we need to use include here to grab the Object Type
         products: {
           include: {
-            product: true
-          }
-        }
-      }
-    })
+            product: true,
+          },
+        },
+      },
+    });
 
     if (!stores) {
-      throw new Error(`🚫 No stores found`)
+      throw new Error(`🚫 No stores found`);
     }
 
-    return stores
-  }
+    return stores;
+  },
+  getStoreById: async (_parent, { id }) => {
+    const store = await prisma.store.findUnique({
+      where: { id: Number(id) },
+      include: {
+        address: true,
+        hq: true,
+        products: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    if (!store) {
+      throw new Error(`🚫 Cannot locate store`);
+    }
+
+    return store;
+  },
 };

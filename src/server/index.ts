@@ -21,7 +21,7 @@ const startServer = async () => {
   await startStandaloneServer(server, {
     listen: { port: 4000 },
     context: async ({ req }: { req: any }): Promise<{ req: any; }> => {
-      req.user = {}
+      req.member = {}
 
       return {
         req

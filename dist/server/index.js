@@ -45,7 +45,7 @@ const startServer = async () => {
     await (0, standalone_1.startStandaloneServer)(server, {
         listen: { port: 4000 },
         context: async ({ req }) => {
-            req.user = {};
+            req.member = {};
             return {
                 req
             };

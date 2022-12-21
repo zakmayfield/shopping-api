@@ -116,7 +116,7 @@ CREATE TABLE "MemberShippingAddress" (
     "address" TEXT NOT NULL,
     "apartment" TEXT,
     "city" TEXT NOT NULL,
-    "stateOrProvince" TEXT NOT NULL,
+    "state" TEXT NOT NULL,
     "zip" TEXT NOT NULL,
     "country" TEXT NOT NULL,
     "memberId" INTEGER NOT NULL,
@@ -132,7 +132,7 @@ CREATE TABLE "MemberBillingAddress" (
     "address" TEXT NOT NULL,
     "apartment" TEXT,
     "city" TEXT NOT NULL,
-    "stateOrProvince" TEXT NOT NULL,
+    "state" TEXT NOT NULL,
     "zip" TEXT NOT NULL,
     "country" TEXT NOT NULL,
     "memberId" INTEGER NOT NULL,
@@ -148,7 +148,7 @@ CREATE TABLE "MemberPayment" (
     "provider" TEXT NOT NULL,
     "nameOnCard" TEXT NOT NULL,
     "cardNumber" INTEGER NOT NULL,
-    "expirationDate" TIMESTAMP(3) NOT NULL,
+    "expirationDate" TEXT NOT NULL,
     "cvv" INTEGER NOT NULL,
     "memberId" INTEGER NOT NULL,
 
@@ -184,7 +184,7 @@ CREATE TABLE "MemberProfile" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "firstName" TEXT,
     "lastName" TEXT,
-    "username" TEXT,
+    "username" TEXT NOT NULL,
     "points" INTEGER DEFAULT 0,
     "memberId" INTEGER NOT NULL,
 
@@ -223,6 +223,9 @@ CREATE UNIQUE INDEX "CartItem_cartId_key" ON "CartItem"("cartId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Cart_memberProfileId_key" ON "Cart"("memberProfileId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "MemberProfile_username_key" ON "MemberProfile"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "MemberProfile_memberId_key" ON "MemberProfile"("memberId");

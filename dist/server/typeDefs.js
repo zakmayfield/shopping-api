@@ -2,18 +2,26 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeDefs = `#graphql
     type Query {
+        # ::: MEMBER :::
+
+        # ::: PRODUCTS :::
         getAllProducts: [Product!]!
-        getProductWithDiscountById(input: ProductById!): Product!
+        getProductById(id: ID!): Product!
 
         # HQ queries
         getAllHQs: [HQ!]!
 
         # Store query
         getAllStores: [Store!]!
+        getStoreById(id: ID!): Store
     }
 
     type Mutation {
-        toggleActiveDiscount(input: DiscountToggle): Discount
+        # ::: MEMBER :::
+        registerMember(input: RegisterMember!): Member!
+
+        # ::: DISCOUNT :::
+        toggleActiveDiscount(id: ID!): Discount
     }
 
     type HQ {
@@ -73,6 +81,14 @@ const typeDefs = `#graphql
         price: Int
         isDiscountActive: Boolean!
         discount: Discount
+        categories: [CategoriesOnProducts]
+    }
+
+    type CategoriesOnProducts {
+        product: Product!
+        productId: Int!
+        category: ProductCategory!
+        categoryId: Int!
     }
 
     type ProductsOnStores {
@@ -81,6 +97,17 @@ const typeDefs = `#graphql
         store: Store
         storeId: Int
         quantity: Int
+    }
+
+    type ProductCategory {
+        id: ID!
+        createdAt: String
+        updatedAt: String
+        name: String!
+        code: String
+        discount: Discount
+        discountId: Int
+        products: [CategoriesOnProducts]
     }
 
     type Discount {
@@ -94,18 +121,80 @@ const typeDefs = `#graphql
         isActive: Boolean
     }
 
+    type Member {
+        id: ID!
+        createdAt: String
+        updatedAt: String
+        email: String!
+        password: String!
+        token: String
+        profile: MemberProfile
+        payments: [MemberPayment]!
+        billingAddresses: [MemberBillingAddress]!
+        shippingAddresses: [MemberShippingAddress]!
+    }
+
+    input RegisterMember {
+        email: String!
+        password: String!
+    }
+
+    type MemberProfile {
+        id: ID!
+        createdAt: String
+        updatedAt: String
+        username: String!
+        firstName: String
+        lastName: String
+        points: Int
+        #cart: Cart
+        member: Member!
+        memberId: Int!
+    }
+
+    type MemberPayment {
+        id: ID!
+        createdAt: String
+        updatedAt: String
+        provider: String!
+        nameOnCard: String!
+        cardNumber: Int
+        expirationDate: String!
+        cvv: Int
+        member: Member
+        memberId: Int
+    }
+
+    type MemberBillingAddress {
+        id: ID!
+        createdAt: String
+        updatedAt: String
+        address: String!
+        apartment: String
+        city: String!
+        state: String!
+        zip: String!
+        member: Member!
+        memberId: Int!
+    }
+
+    type MemberShippingAddress {
+        id: ID!
+        createdAt: String
+        updatedAt: String
+        address: String!
+        apartment: String
+        city: String!
+        state: String!
+        zip: String!
+        member: Member!
+        memberId: Int!
+    }
+
     input ProductInput {
         name: String!
         price: String
         description: String
-    }
-
-    input ProductById {
-        productId: Int!
-    }
-
-    input DiscountToggle {
-        discountId: Int!
     }
 `;
 exports.default = typeDefs;
