@@ -4,26 +4,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Mutation = void 0;
-const client_1 = __importDefault(require("../../prisma/client"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const generateToken = (id) => jsonwebtoken_1.default.sign({ userId: id }, config_1.default.APP_SECRET, { expiresIn: '2d' });
 exports.Mutation = {
-    //MEMBER
+    // ::: MEMBER :::
     registerMember: async (_parent, args, context) => {
         const { email, password } = args.input;
-        const checkIfEmailExists = await client_1.default.member.findUnique({ where: { email } });
+        const checkIfEmailExists = await context.db.member.findUnique({
+            where: { email },
+        });
         if (checkIfEmailExists) {
             throw new Error(`🚫 Email already registered`);
         }
         const salt = await bcrypt_1.default.genSalt(10);
         const hashedPassword = await bcrypt_1.default.hash(password, salt);
-        const createdMember = await client_1.default.member.create({
+        const createdMember = await context.db.member.create({
             data: {
                 email,
-                password: hashedPassword
-            }
+                password: hashedPassword,
+            },
         });
         const validMember = {
             ...createdMember,
@@ -38,9 +39,9 @@ exports.Mutation = {
     },
     loginMember: async (_parent, { input }, context) => {
         const { email, password } = input;
-        const member = await client_1.default.member.findUnique({
+        const member = await context.db.member.findUnique({
             where: {
-                email
+                email,
             },
         });
         if (!member) {
@@ -53,22 +54,17 @@ exports.Mutation = {
             ...member,
             token: generateToken(member.id)
         };
-        // @context-debugging
-        // my theory here is that i can set context.member to be equal to an object upon login
-        // then any hits to context thereafter will produce 
-        // context.member = {
-        //   id: validMember.id,
-        //   token: validMember.token
-        // };
-        console.log('context', context);
         return validMember;
     },
-    toggleActiveDiscount: async (_parent, { id }) => {
-        const discount = await client_1.default.discount.findUnique({ where: { id: Number(id) } });
+    // ::: DISCOUNT :::
+    toggleActiveDiscount: async (_parent, { id }, context) => {
+        const discount = await context.db.discount.findUnique({
+            where: { id: Number(id) },
+        });
         if (!discount) {
             throw new Error(`Cannot locate discount`);
         }
-        const updatedDiscount = await client_1.default.discount.update({
+        const updatedDiscount = await context.db.discount.update({
             where: { id },
             data: {
                 isActive: !discount.isActive,
