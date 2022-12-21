@@ -52,6 +52,7 @@ const startServer = async () => {
     });
     console.log(`Server running ::: localhost:4000 :::`);
 };
+// // WITH LISTEN SYNTAX
 // const startServer = async () => {
 //   await startStandaloneServer(server, {
 //     listen: { port: 4000 },
