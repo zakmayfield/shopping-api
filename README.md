@@ -10,6 +10,7 @@
 
 ### **Tech Stack**
 
+- TypeScript : `typescript`
 - Apollo Server : `@apollo/server`
 - Prisma : `@prisma/client`
 - GraphQL : `graphql`
