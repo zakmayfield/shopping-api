@@ -1,9 +1,8 @@
-import prisma from '../../prisma/client';
-
 export const Query = {
-  //MEMBER
-  getMemberById: async (_parent, { id }) => {    
-    const member = await prisma.member.findUnique({ 
+  // ::: MEMBER ::: 
+  getMemberById: async (_parent, { id }, context) => {    
+    console.log('hitting')
+    const member = await context.db.member.findUnique({ 
       where: { id: Number(id)},
       include: {
         profile: true,
@@ -18,9 +17,9 @@ export const Query = {
     return member
   },
 
-  //PRODUCTS
-  getAllProducts: async (_parent) => {
-    const products = await prisma.product.findMany();
+  // ::: PRODUCTS ::: 
+  getAllProducts: async (_parent, _args, context) => {
+    const products = await context.db.product.findMany();
 
     if (!products) {
       throw new Error(`Server error`);
@@ -28,8 +27,8 @@ export const Query = {
 
     return products;
   },
-  getProductById: async (_parent, { id }) => {
-    const product = await prisma.product.findUnique({
+  getProductById: async (_parent, { id }, context) => {
+    const product = await context.db.product.findUnique({
       where: { id: Number(id) },
       include: {
         discount: true,
@@ -46,9 +45,9 @@ export const Query = {
     return product;
   },
 
-  //HQs
-  getAllHQs: async (_parent) => {
-    const HQs = await prisma.hQ.findMany({
+  // ::: HQs ::: 
+  getAllHQs: async (_parent, _args, context) => {
+    const HQs = await context.db.hQ.findMany({
       include: {
         address: true,
         stores: true,
@@ -62,9 +61,9 @@ export const Query = {
     return HQs;
   },
 
-  //Stores
-  getAllStores: async (_parent) => {
-    const stores = await prisma.store.findMany({
+  // ::: Stores ::: 
+  getAllStores: async (_parent, _args, context) => {
+    const stores = await context.db.store.findMany({
       include: {
         address: true,
         hq: true,
@@ -83,8 +82,8 @@ export const Query = {
 
     return stores;
   },
-  getStoreById: async (_parent, { id }) => {
-    const store = await prisma.store.findUnique({
+  getStoreById: async (_parent, { id }, context) => {
+    const store = await context.db.store.findUnique({
       where: { id: Number(id) },
       include: {
         address: true,
