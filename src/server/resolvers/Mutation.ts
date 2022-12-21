@@ -42,6 +42,41 @@ export const Mutation = {
     return validMember;
   },
 
+  loginMember: async (_parent, { input }, context) => {
+    const { email, password } = input
+
+    const member = await prisma.member.findUnique({
+      where: {
+        email
+      },
+    });
+
+    if (!member) {
+      throw new Error(`🚫 EMAIL DOES NOT EXIST :::`);
+    }
+
+    const valid = await bcrypt.compare(password, member.password);
+
+    if (!valid) throw new Error(`🚫 Invalid Password`);
+
+    const validMember = {
+      ...member,
+      token: generateToken(member.id)
+    }
+
+    // @context-debugging
+    // my theory here is that i can set context.member to be equal to an object upon login
+    // then any hits to context thereafter will produce 
+    // context.member = {
+    //   id: validMember.id,
+    //   token: validMember.token
+    // };
+
+    console.log('context', context)
+
+    return validMember
+  },
+
   toggleActiveDiscount: async (_parent, { id }) => {
     const discount = await prisma.discount.findUnique({ where: { id: Number(id) } });
 

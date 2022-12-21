@@ -18,6 +18,7 @@ const typeDefs = `#graphql
     type Mutation {
         # ::: MEMBER :::
         registerMember(input: RegisterMember!): Member!
+        loginMember(input: LoginMember!): Member!
 
         # ::: DISCOUNT :::
         toggleActiveDiscount(id: ID!): Discount
@@ -134,6 +135,11 @@ const typeDefs = `#graphql
     }
 
     input RegisterMember {
+        email: String!
+        password: String!
+    }
+
+    input LoginMember {
         email: String!
         password: String!
     }

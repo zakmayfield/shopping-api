@@ -20,10 +20,7 @@ exports.Query = {
         return member;
     },
     //PRODUCTS
-    getAllProducts: async (_parent, args, context) => {
-        const user = context.req.user;
-        console.log(user);
-        console.log(context.req.user);
+    getAllProducts: async (_parent) => {
         const products = await client_1.default.product.findMany();
         if (!products) {
             throw new Error(`Server error`);
@@ -48,7 +45,7 @@ exports.Query = {
         return product;
     },
     //HQs
-    getAllHQs: async (_parent, args) => {
+    getAllHQs: async (_parent) => {
         const HQs = await client_1.default.hQ.findMany({
             include: {
                 address: true,
@@ -61,7 +58,7 @@ exports.Query = {
         return HQs;
     },
     //Stores
-    getAllStores: async (_parent, args) => {
+    getAllStores: async (_parent) => {
         const stores = await client_1.default.store.findMany({
             include: {
                 address: true,
