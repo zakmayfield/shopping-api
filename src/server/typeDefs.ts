@@ -1,6 +1,7 @@
 const typeDefs = `#graphql
     type Query {
         # ::: MEMBER :::
+        getMemberById(id: ID!): Member!
 
         # ::: PRODUCTS :::
         getAllProducts: [Product!]!

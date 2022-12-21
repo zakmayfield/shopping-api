@@ -6,6 +6,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Query = void 0;
 const client_1 = __importDefault(require("../../prisma/client"));
 exports.Query = {
+    //MEMBER
+    getMemberById: async (_parent, { id }) => {
+        const member = await client_1.default.member.findUnique({
+            where: { id: Number(id) },
+            include: {
+                profile: true,
+            }
+        });
+        if (!member) {
+            throw new Error(`🚫 Member could not be found`);
+        }
+        return member;
+    },
+    //PRODUCTS
     getAllProducts: async (_parent, args, context) => {
         const user = context.req.user;
         console.log(user);

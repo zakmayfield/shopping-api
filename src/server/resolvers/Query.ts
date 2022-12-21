@@ -1,6 +1,24 @@
 import prisma from '../../prisma/client';
 
 export const Query = {
+  //MEMBER
+  getMemberById: async (_parent, { id }) => {
+    const member = await prisma.member.findUnique({ 
+      where: { id: Number(id)},
+      include: {
+        profile: true,
+        
+      }
+    })
+
+    if (!member) {
+      throw new Error(`🚫 Member could not be found`)
+    }
+
+    return member
+  },
+
+  //PRODUCTS
   getAllProducts: async (_parent, args, context) => {
     const user = context.req.user;
 
