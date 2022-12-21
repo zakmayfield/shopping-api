@@ -2,7 +2,7 @@
 
 ### **Details**
 
-- This api is written with GraphQL, Apollo Server, Prisma, and TypeScript
+- This api is written with `GraphQL`, `Apollo Server`, `Prisma`, and `TypeScript`
 
 ### **Goals**
 
