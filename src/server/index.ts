@@ -20,9 +20,15 @@ const server = new ApolloServer({
   resolvers,
 });
 
+interface ContextReturn {
+  db: PrismaClient
+}
+
 startStandaloneServer(server, {
   listen: { port: 4000 },
-  context: async ({ req }: { req: any }): Promise<{ db: PrismaClient }> => ({
-    db: prisma
-  }),
+  context: async ({ req }: { req: any }): Promise<ContextReturn> => {
+    const db = prisma
+
+    return { db }
+  },
 }).then(({ url }) => console.log(`🚀 Server running at ${url}`));
