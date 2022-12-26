@@ -52,7 +52,6 @@ const server = new server_1.ApolloServer({
         // if no token then throw
         // if token then auth
         const db = prisma;
-        const token = (req.headers && req.headers.authorization) || null;
         return { db, req };
     },
 }).then(({ url }) => console.log(`🚀 Server running at ${url}`));
