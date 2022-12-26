@@ -1,6 +1,10 @@
 export const Query = {
   // ::: MEMBER ::: +
-  getMemberById: async (_parent, { id }, context) => {    
+  getMemberById: async (_parent, { id }, context) => {   
+    // const token = context.req.headers ? 'token' : null
+    
+    console.log('CONTEXT :::', context)
+    
     const member = await context.db.member.findUnique({ 
       where: { id: Number(id)},
       include: {

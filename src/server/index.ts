@@ -22,6 +22,7 @@ const server = new ApolloServer({
 
 interface ContextReturn {
   db: PrismaClient
+  req: any
 }
 
 startStandaloneServer(server, {
@@ -34,6 +35,6 @@ startStandaloneServer(server, {
     // if token then auth
     const db = prisma
 
-    return { db }
+    return { db, req }
   },
 }).then(({ url }) => console.log(`🚀 Server running at ${url}`));
