@@ -43,6 +43,7 @@ const server = new server_1.ApolloServer({
     typeDefs: typeDefs_1.default,
     resolvers,
 });
+
 (0, standalone_1.startStandaloneServer)(server, {
     listen: { port: 4000 },
     context: async ({ req }) => {
