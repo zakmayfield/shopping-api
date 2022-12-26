@@ -26,6 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const client_1 = require("@prisma/client");
 const server_1 = require("@apollo/server");
 const standalone_1 = require("@apollo/server/standalone");
 const Query_1 = require("./resolvers/Query");
@@ -33,6 +34,7 @@ const Mutation_1 = require("./resolvers/Mutation");
 const typeDefs_1 = __importDefault(require("./typeDefs"));
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
+const prisma = new client_1.PrismaClient();
 const resolvers = {
     Query: Query_1.Query,
     Mutation: Mutation_1.Mutation,
@@ -41,28 +43,16 @@ const server = new server_1.ApolloServer({
     typeDefs: typeDefs_1.default,
     resolvers,
 });
-const startServer = async () => {
-    await (0, standalone_1.startStandaloneServer)(server, {
-        context: async ({ req }) => {
-            const member = {};
-            return {
-                member
-            };
-        },
-    });
-    console.log(`Server running ::: localhost:4000 :::`);
-};
-// // WITH LISTEN SYNTAX
-// const startServer = async () => {
-//   await startStandaloneServer(server, {
-//     listen: { port: 4000 },
-//     context: async ({ req }: { req: any }): Promise<{ member: any; }> => {
-//       const member = {}
-//       return {
-//         member
-//       };
-//     },
-//   });
-//   console.log(`Server running ::: localhost:4000 :::`);
-// };
-startServer();
+
+(0, standalone_1.startStandaloneServer)(server, {
+    listen: { port: 4000 },
+    context: async ({ req }) => {
+        // does this req come from the client? 
+        // when loggin in as a member we can send a req.headers.authorization with bearer token attached and then we crack it open here
+        // for example: let token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null
+        // if no token then throw
+        // if token then auth
+        const db = prisma;
+        return { db, req };
+    },
+}).then(({ url }) => console.log(`🚀 Server running at ${url}`));

@@ -1,4 +1,3 @@
-import prisma from '../../prisma/client';
 import jwt from 'jsonwebtoken'
 import config from '../config'
 import bcrypt from 'bcrypt'
@@ -7,11 +6,13 @@ const generateToken = (id: number) =>
   jwt.sign({ userId: id }, config.APP_SECRET, { expiresIn: '2d' });
 
 export const Mutation = {
-  //MEMBER
+  // ::: MEMBER :::
   registerMember: async (_parent, args, context) => {
     const { email, password } = args.input;
 
-    const checkIfEmailExists = await prisma.member.findUnique({ where: { email }})
+    const checkIfEmailExists = await context.db.member.findUnique({
+      where: { email },
+    });
 
     if (checkIfEmailExists) {
       throw new Error(`🚫 Email already registered`)
@@ -20,12 +21,12 @@ export const Mutation = {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
 
-    const createdMember = await prisma.member.create({
+    const createdMember = await context.db.member.create({
       data: {
         email,
-        password: hashedPassword
-      }
-    })
+        password: hashedPassword,
+      },
+    });
 
     const validMember = {
       ...createdMember,
@@ -45,9 +46,9 @@ export const Mutation = {
   loginMember: async (_parent, { input }, context) => {
     const { email, password } = input
 
-    const member = await prisma.member.findUnique({
+    const member = await context.db.member.findUnique({
       where: {
-        email
+        email,
       },
     });
 
@@ -64,27 +65,20 @@ export const Mutation = {
       token: generateToken(member.id)
     }
 
-    // @context-debugging
-    // my theory here is that i can set context.member to be equal to an object upon login
-    // then any hits to context thereafter will produce 
-    // context.member = {
-    //   id: validMember.id,
-    //   token: validMember.token
-    // };
-
-    console.log('context', context)
-
     return validMember
   },
 
-  toggleActiveDiscount: async (_parent, { id }) => {
-    const discount = await prisma.discount.findUnique({ where: { id: Number(id) } });
+  // ::: DISCOUNT :::
+  toggleActiveDiscount: async (_parent, { id }, context) => {
+    const discount = await context.db.discount.findUnique({
+      where: { id: Number(id) },
+    });
 
     if (!discount) {
       throw new Error(`Cannot locate discount`);
     }
 
-    const updatedDiscount = await prisma.discount.update({
+    const updatedDiscount = await context.db.discount.update({
       where: { id },
       data: {
         isActive: !discount.isActive,

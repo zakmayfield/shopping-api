@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client';
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { Query } from './resolvers/Query';
@@ -6,6 +7,8 @@ import typeDefs from './typeDefs';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
+
+const prisma = new PrismaClient();
 
 const resolvers = {
   Query,
@@ -17,35 +20,21 @@ const server = new ApolloServer({
   resolvers,
 });
 
-const startServer = async () => {
-  await startStandaloneServer(server, {
-    context: async ({ req }: { req: any }): Promise<{ member: any; }> => {
-      const member = {}
-      
-      return {
-        member
-      }
-    },
-  });
+interface ContextReturn {
+  db: PrismaClient
+  req: any
+}
 
-  console.log(`Server running ::: localhost:4000 :::`);
-};
+startStandaloneServer(server, {
+  listen: { port: 4000 },
+  context: async ({ req }: { req: any }): Promise<ContextReturn> => {
+    // does this req come from the client? 
+    // when loggin in as a member we can send a req.headers.authorization with bearer token attached and then we crack it open here
+    // for example: let token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null
+    // if no token then throw
+    // if token then auth
+    const db = prisma
 
-// // WITH LISTEN SYNTAX
-
-// const startServer = async () => {
-//   await startStandaloneServer(server, {
-//     listen: { port: 4000 },
-//     context: async ({ req }: { req: any }): Promise<{ member: any; }> => {
-//       const member = {}
-
-//       return {
-//         member
-//       };
-//     },
-//   });
-
-//   console.log(`Server running ::: localhost:4000 :::`);
-// };
-
-startServer();
+    return { db, req }
+  },
+}).then(({ url }) => console.log(`🚀 Server running at ${url}`));

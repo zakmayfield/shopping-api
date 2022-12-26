@@ -1,14 +1,12 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Query = void 0;
-const client_1 = __importDefault(require("../../prisma/client"));
 exports.Query = {
-    //MEMBER
-    getMemberById: async (_parent, { id }) => {
-        const member = await client_1.default.member.findUnique({
+    // ::: MEMBER ::: +
+    getMemberById: async (_parent, { id }, context) => {
+        // const token = context.req.headers ? 'token' : null
+        console.log('CONTEXT :::', context);
+        const member = await context.db.member.findUnique({
             where: { id: Number(id) },
             include: {
                 profile: true,
@@ -19,16 +17,16 @@ exports.Query = {
         }
         return member;
     },
-    //PRODUCTS
-    getAllProducts: async (_parent) => {
-        const products = await client_1.default.product.findMany();
+    // ::: PRODUCTS ::: 
+    getAllProducts: async (_parent, _args, context) => {
+        const products = await context.db.product.findMany();
         if (!products) {
             throw new Error(`Server error`);
         }
         return products;
     },
-    getProductById: async (_parent, { id }) => {
-        const product = await client_1.default.product.findUnique({
+    getProductById: async (_parent, { id }, context) => {
+        const product = await context.db.product.findUnique({
             where: { id: Number(id) },
             include: {
                 discount: true,
@@ -44,9 +42,9 @@ exports.Query = {
         }
         return product;
     },
-    //HQs
-    getAllHQs: async (_parent) => {
-        const HQs = await client_1.default.hQ.findMany({
+    // ::: HQs ::: 
+    getAllHQs: async (_parent, _args, context) => {
+        const HQs = await context.db.hQ.findMany({
             include: {
                 address: true,
                 stores: true,
@@ -57,9 +55,9 @@ exports.Query = {
         }
         return HQs;
     },
-    //Stores
-    getAllStores: async (_parent) => {
-        const stores = await client_1.default.store.findMany({
+    // ::: Stores ::: 
+    getAllStores: async (_parent, _args, context) => {
+        const stores = await context.db.store.findMany({
             include: {
                 address: true,
                 hq: true,
@@ -76,8 +74,8 @@ exports.Query = {
         }
         return stores;
     },
-    getStoreById: async (_parent, { id }) => {
-        const store = await client_1.default.store.findUnique({
+    getStoreById: async (_parent, { id }, context) => {
+        const store = await context.db.store.findUnique({
             where: { id: Number(id) },
             include: {
                 address: true,
