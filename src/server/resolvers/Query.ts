@@ -1,17 +1,15 @@
 export const Query = {
   // ::: MEMBER ::: +
-  getMemberById: async (_parent, { id }, context) => {   
-    // const token = context.req.headers ? 'token' : null
-    
-    console.log('CONTEXT :::', context)
-    
-    const member = await context.db.member.findUnique({ 
-      where: { id: Number(id)},
+  getMemberById: async (_parent, { id }, context) => {
+    const member = await context.db.member.findUnique({
+      where: { id: Number(id) },
       include: {
         profile: true,
-        
-      }
-    })
+        billingAddresses: true,
+        shippingAddresses: true,
+        payments: true
+      },
+    });
 
     if (!member) {
       throw new Error(`🚫 Member could not be found`)

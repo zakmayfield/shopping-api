@@ -188,7 +188,7 @@ model MemberPayment {
   // mastercard || visa
   nameOnCard     String
   // geralt of rivia
-  cardNumber     Int
+  cardNumber     String
   // 1234 1234 1234 1234
   expirationDate String
   // date time can format on frontend

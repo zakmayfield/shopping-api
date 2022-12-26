@@ -163,7 +163,7 @@ const typeDefs = `#graphql
         updatedAt: String
         provider: String!
         nameOnCard: String!
-        cardNumber: Int
+        cardNumber: String!
         expirationDate: String!
         cvv: Int
         member: Member
