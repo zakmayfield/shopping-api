@@ -45,7 +45,8 @@ const server = new server_1.ApolloServer({
 });
 (0, standalone_1.startStandaloneServer)(server, {
     listen: { port: 4000 },
-    context: async ({ req }) => ({
-        db: prisma
-    }),
+    context: async ({ req }) => {
+        const db = prisma;
+        return { db };
+    },
 }).then(({ url }) => console.log(`🚀 Server running at ${url}`));
