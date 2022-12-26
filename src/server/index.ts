@@ -31,7 +31,7 @@ startStandaloneServer(server, {
     // does this req come from the client? 
     // when loggin in as a member we can send a req.headers.authorization with bearer token attached and then we crack it open here
     // for example: let token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null
-    // if no token then throw
+    // if no token then throw error
     // if token then auth
     const db = prisma
 
