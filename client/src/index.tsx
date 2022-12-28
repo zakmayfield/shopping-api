@@ -6,7 +6,9 @@ import reportWebVitals from './reportWebVitals';
 
 import {
   ApolloClient,
+  ApolloProvider,
   InMemoryCache,
+  gql
 } from '@apollo/client';
 
 export const client = new ApolloClient({
@@ -20,7 +22,9 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <App />
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>
   </React.StrictMode>
 );
 
