@@ -8,7 +8,6 @@ import {
   ApolloClient,
   ApolloProvider,
   InMemoryCache,
-  gql
 } from '@apollo/client';
 
 export const client = new ApolloClient({
