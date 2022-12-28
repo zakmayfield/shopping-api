@@ -4,6 +4,7 @@ exports.Query = void 0;
 exports.Query = {
     // ::: MEMBER ::: +
     getMemberById: async (_parent, { id }, context) => {
+        console.log('CONTEXT :::', context);
         const member = await context.db.member.findUnique({
             where: { id: Number(id) },
             include: {

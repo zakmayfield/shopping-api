@@ -7,7 +7,7 @@ exports.Mutation = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const generateToken = (id) => jsonwebtoken_1.default.sign({ userId: id }, config_1.default.APP_SECRET, { expiresIn: '2d' });
+const generateToken = (id) => jsonwebtoken_1.default.sign({ memberId: id }, config_1.default.APP_SECRET, { expiresIn: '2d' });
 exports.Mutation = {
     // ::: MEMBER :::
     registerMember: async (_parent, args, context) => {

@@ -33,6 +33,8 @@ const Query_1 = require("./resolvers/Query");
 const Mutation_1 = require("./resolvers/Mutation");
 const typeDefs_1 = __importDefault(require("./typeDefs"));
 const dotenv = __importStar(require("dotenv"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const config_1 = __importDefault(require("./config"));
 dotenv.config();
 const prisma = new client_1.PrismaClient();
 const resolvers = {
@@ -43,15 +45,39 @@ const server = new server_1.ApolloServer({
     typeDefs: typeDefs_1.default,
     resolvers,
 });
+const getMember = async (id) => {
+    return await prisma.member.findUnique({
+        where: { id },
+        select: {
+            id: true,
+            email: true,
+        }
+    });
+};
+const auth = async (req) => {
+    let token;
+    let member;
+    if (req.headers && req.headers.authorization) {
+        token = req.headers.authorization.split(' ')[1];
+        const { memberId } = jsonwebtoken_1.default.verify(token, config_1.default.APP_SECRET);
+        if (!memberId) {
+            throw new Error(`🚫 NO AUTH`);
+        }
+        member = await getMember(memberId);
+    }
+    return {
+        member,
+    };
+};
 (0, standalone_1.startStandaloneServer)(server, {
     listen: { port: 4000 },
     context: async ({ req }) => {
         const db = prisma;
-        let token;
-        if (req.headers && req.headers.authorization) {
-            token = (req.headers && req.headers.authorization.split(' ')[1]) || null;
+        const { member } = await auth(req);
+        if (member) {
+            req.member = member;
         }
-        token ? console.log('TOKEN :::', token) : console.log(`NO AUTH :::`);
-        return { db, req };
+        // console.log('MEMBER :::', member)
+        return { db, member };
     },
 }).then(({ url }) => console.log(`🚀 Server running at ${url}`));

@@ -3,7 +3,7 @@ import config from '../config'
 import bcrypt from 'bcrypt'
 
 const generateToken = (id: number) =>
-  jwt.sign({ userId: id }, config.APP_SECRET, { expiresIn: '2d' });
+  jwt.sign({ memberId: id }, config.APP_SECRET, { expiresIn: '2d' });
 
 export const Mutation = {
   // ::: MEMBER :::
