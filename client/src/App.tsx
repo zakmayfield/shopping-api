@@ -16,11 +16,7 @@ const GET_PRODUCTS = gql`
 
 function App() {
   const [products, setProducts] = useState([]);
-  const { loading, error, data } = useQuery(GET_PRODUCTS);
-  const query = useQuery(GET_PRODUCTS);
-
-  console.log('DATA - ALL PRODUCTS :::', data?.getAllProducts);
-  console.log('QUERY :::', query);
+  const { loading, data } = useQuery(GET_PRODUCTS);
 
   useEffect(() => {
     if (data?.getAllProducts.length !== 0) {
