@@ -34,8 +34,6 @@ startStandaloneServer(server, {
     if (req.headers && req.headers.authorization) {
       token = (req.headers && req.headers.authorization.split(' ')[1]) || null
     }
-    
-    token ? console.log('TOKEN :::', token) : console.log(`NO AUTH :::`)
 
     return { db, req }
   },

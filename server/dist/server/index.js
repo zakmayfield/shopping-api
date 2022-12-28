@@ -43,16 +43,15 @@ const server = new server_1.ApolloServer({
     typeDefs: typeDefs_1.default,
     resolvers,
 });
-
 (0, standalone_1.startStandaloneServer)(server, {
     listen: { port: 4000 },
     context: async ({ req }) => {
-        // does this req come from the client? 
-        // when loggin in as a member we can send a req.headers.authorization with bearer token attached and then we crack it open here
-        // for example: let token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null
-        // if no token then throw
-        // if token then auth
         const db = prisma;
+        let token;
+        if (req.headers && req.headers.authorization) {
+            token = (req.headers && req.headers.authorization.split(' ')[1]) || null;
+        }
+        token ? console.log('TOKEN :::', token) : console.log(`NO AUTH :::`);
         return { db, req };
     },
 }).then(({ url }) => console.log(`🚀 Server running at ${url}`));
