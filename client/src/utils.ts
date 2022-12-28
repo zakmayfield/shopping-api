@@ -1,35 +1,28 @@
 import { gql, useQuery } from '@apollo/client';
 import { useState } from 'react';
 
-export const GET_USER = gql`
-  query GetMyProfile {
-    me {
+export const GET_MEMBER = gql`
+  query GetMember {
+    member {
       id
       name
-      profilePicture
-      ... on Host {
-        profileDescription
-      }
-      ... on Guest {
-        funds
-      }
     }
   }
 `;
 
-export function useUser() {
-  const [user, setUser] = useState();
+export function useMember() {
+  const [member, setMember] = useState();
 
-  const { loading, error } = useQuery(GET_USER, {
+  const { loading, error } = useQuery(GET_MEMBER, {
     fetchPolicy: 'no-cache',
-    onCompleted: ({ me }) => {
-      setUser({ ...me });
+    onCompleted: ({ member }) => {
+      setMember({ ...member });
     },
   });
 
   return {
-    user,
-    setUser,
+    member,
+    setMember,
     loading,
     error,
   };
