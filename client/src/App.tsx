@@ -3,6 +3,7 @@ import './App.css';
 import { gql, useQuery } from '@apollo/client';
 import { Product } from './gql/graphql';
 
+
 const GET_PRODUCTS = gql`
   query GetAllProducts {
     getAllProducts {
