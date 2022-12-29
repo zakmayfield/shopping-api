@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import { gql, useQuery } from '@apollo/client';
+import { Product } from './gql/graphql'
 
 const GET_PRODUCTS = gql`
   query GetAllProducts {
@@ -14,7 +15,7 @@ const GET_PRODUCTS = gql`
 `;
 
 function App() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const { loading, data } = useQuery(GET_PRODUCTS);
 
   useEffect(() => {

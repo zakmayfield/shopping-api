@@ -39,20 +39,20 @@ const getMember = async (id) => {
 };
 
 const auth = async (req) => {
-  let token: string
-  let member;
+  // let token: string
+  let member = {}
 
-  if (req.headers && req.headers.authorization) {
-    token = req.headers.authorization.split(' ')[1];
+  // if (req.headers && req.headers.authorization) {
+  //   token = req.headers.authorization.split(' ')[1];
   
-    const { memberId } = jwt.verify(token, config.APP_SECRET);
+  //   const { memberId } = jwt.verify(token, config.APP_SECRET);
   
-    if (!memberId) {
-      throw new Error(`🚫 NO AUTH`);
-    }
+  //   if (!memberId) {
+  //     throw new Error(`🚫 NO AUTH`);
+  //   }
   
-    member = await getMember(memberId);
-  }
+  //   member = await getMember(memberId);
+  // }
 
   return {
     member,
