@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
 import './App.css';
 import { gql, useQuery } from '@apollo/client';
-import { Product } from './gql/graphql';
-import {BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
 
 const GET_PRODUCTS = gql`
   query GetAllProducts {
@@ -16,20 +14,7 @@ const GET_PRODUCTS = gql`
 `;
 
 function App() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const { loading, data } = useQuery(GET_PRODUCTS);
-
-  useEffect(() => {
-    if (data?.getAllProducts.length !== 0) {
-      setProducts(data?.getAllProducts);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    console.log('products', products);
-  }, [products]);
-
-  if (loading) return <div> loading... </div>;
+  const { data } = useQuery(GET_PRODUCTS);
 
   return (
     <div className='App'>
