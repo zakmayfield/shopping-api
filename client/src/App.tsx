@@ -1,6 +1,12 @@
 import './App.css';
 import { gql, useQuery } from '@apollo/client';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+} from 'react-router-dom';
+
+import { Login, TempLanding } from './pages';
 
 const GET_PRODUCTS = gql`
   query GetAllProducts {
@@ -15,11 +21,20 @@ const GET_PRODUCTS = gql`
 
 function App() {
   const { data } = useQuery(GET_PRODUCTS);
+  console.log(data)
 
   return (
-    <div className='App'>
-      <header className='App-header'></header>
-    </div>
+    <Router>
+      <Switch>
+        <Route path='/'>
+          <TempLanding />
+        </Route>
+
+        <Route path='/login'>
+          <Login />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
