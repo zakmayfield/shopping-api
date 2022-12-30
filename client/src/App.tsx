@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import { gql, useQuery } from '@apollo/client';
 import { Product } from './gql/graphql';
-
+import {BrowserRouter as Router } from 'react-router-dom'
 
 const GET_PRODUCTS = gql`
   query GetAllProducts {
